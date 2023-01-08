@@ -3,16 +3,19 @@ import { ImageGalleryItem } from '../ImageGalleryItem/ImageGalleryItem'
 import styles from './ImageGallery.module.css'
 
 export function ImageGallery({ cards, onOpen }) {
-    const Elements = cards.map(({ id, webformatURL, largeImageURL }) => {
-        
-        return (<ImageGalleryItem key={id} webformatURL={webformatURL} largeImageURL={largeImageURL} onOpen={onOpen} />)
-    })
     return (
         <ul className={styles.image_gallery}>
-        {Elements && Elements}  
+             {cards.map(({ id, webformatURL, largeImageURL }) => (
+                <ImageGalleryItem 
+                    key={id} 
+                    webformatURL={webformatURL} 
+                    largeImageURL={largeImageURL} 
+                    onOpen={onOpen} 
+                />
+             ))}
         </ul>
-    )
-}
+    );
+};
 
 ImageGallery.propTypes = {
     onOpen: PropTypes.func.isRequired,
