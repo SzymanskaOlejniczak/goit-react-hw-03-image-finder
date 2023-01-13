@@ -1,9 +1,6 @@
 import React, { Component } from "react";
-import { createPortal } from 'react-dom';
-import styles from './Modal.module.css'
+import styles from './Modal.module.css';
 import PropTypes from "prop-types";
-
-const modalRoot = document.getElementById('root');
 
 export class Modal extends Component {
     componentDidMount() {
@@ -25,12 +22,12 @@ export class Modal extends Component {
             }      
     }
     render() {
-        return createPortal(
+        return (
         <div className={styles.overlay}>
             <div className={styles.modal}>
                 <img src={this.props.modalImage} alt="modalPicture" />
             </div>
-        </div>, modalRoot
+        </div>
         );
     }
 }
