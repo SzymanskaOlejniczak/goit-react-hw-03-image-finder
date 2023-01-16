@@ -1,18 +1,16 @@
 import { Component } from 'react'
+import Notiflix from 'notiflix';
 import { ImageGallery } from "../ImageGallery/ImageGallery";
 import { Searchbar } from "../SearchBar/SearchBar";
 import { Button } from '../Button/Button';
 import { Loader } from '../Loader/Loader';
 import { Modal } from '../Modal/Modal'
-import axios from "axios";
+import {fetchPhotos} from 'components/api';
 import styles from './App.module.css'
-import Notiflix from 'notiflix';
 
 export class App extends Component {
 
   state = {
-    URL: 'https://pixabay.com/api/',
-    KEY: '31279594-d7f31148a9794d6f86efa6037',
     cards: [],
     search: "",
     error: "",
@@ -20,13 +18,17 @@ export class App extends Component {
     page: 1,
     showModal: false,
     modalImage: null,
-  }
+    searchText: ""
 
-  fetchPosts = () => {
-    const { search, page, URL, KEY } = this.state
-    
-    axios.get(`${URL}?q=${search}&page=${page}&key=${KEY}&image_type=photo&orientation=horizontal&per_page=12`)
-    .then(response => response.data.hits)
+  }
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.search !== prevState.search || this.state.page !== prevState.page) {
+      setTimeout(this.fetchPosts, 600) 
+    }
+  }
+  fetchPosts = async() => {
+    const { search, page } = this.state;
+    await fetchPhotos(search, page)
     .then(data => {
       const dataArray = [];
       data.map(({ id, webformatURL, largeImageURL }) =>dataArray.push({ id, webformatURL, largeImageURL })
@@ -40,28 +42,26 @@ export class App extends Component {
     .then( (newCards) => {
         this.setState((prevState) => {
           if (prevState.cards.length === 0) {
-        return {
-        cards: newCards,
-      }
-      } else {
-        
-        return {
-          cards: [...prevState.cards, ...newCards]
-        }
-      }
-      
+            return {
+              cards: newCards,
+            }
+          } else {
+            return {
+              cards: [...prevState.cards, ...newCards]
+            }
+          }
+        })
       })
-    })
-    .catch(error => {
-      this.setState({
-        error
+      .catch(error => {
+        this.setState({
+          error
+        })
       })
-    })
       .finally(() => this.setState({
         loading: false,  
       })
       )
-  }
+    }
 
   onSubmit = (e) => {
     e.preventDefault()
@@ -76,16 +76,13 @@ export class App extends Component {
     })
     } else if (searchValue === "") {
       Notiflix.Notify.info('input is empty!');
-    }
-    
+    }  
   }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (this.state.search !== prevState.search || this.state.page !== prevState.page) {
-      setTimeout(this.fetchPosts, 200) 
-    }
-  }
-
+  onInputChange = (e) => {
+    this.setState({
+        searchText: e.target.value,
+    })
+}
   onLoadMore = () => {
     this.setState((prevState) => {
       return {
@@ -104,20 +101,18 @@ export class App extends Component {
       modalImage: largeImageURL,
     })
     this.toggleModal()
-
   }
 
   render() {
     const {showModal,modalImage,cards,loading} = this.state
     return (
       <div className={styles.app}>
-        <Searchbar onSubmit={this.onSubmit} />
+        <Searchbar onSubmit={this.onSubmit} onInputChange={this.onInputChange} />
         <ImageGallery cards={cards} onOpen={this.openModal} />
         {loading && <Loader/>}
         {cards.length > 1 && <Button onLoadMore={this.onLoadMore} />}
         {showModal && modalImage && (<Modal onClose={this.toggleModal} modalImage={modalImage} />)}
       </div>
     );
-  }
-  
+  } 
 };
