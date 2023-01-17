@@ -16,7 +16,6 @@ export class Searchbar extends Component {
                         name='searchInput'
                         type="text"
                         autoComplete="off"
-                        value={this.props.searchText}
                         autoFocus
                         placeholder="Search images and photos"
                     />
