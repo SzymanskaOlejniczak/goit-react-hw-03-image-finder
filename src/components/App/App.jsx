@@ -18,8 +18,6 @@ export class App extends Component {
     page: 1,
     showModal: false,
     modalImage: null,
-    searchText: ""
-
   }
   componentDidUpdate(prevProps, prevState) {
     if (this.state.search !== prevState.search || this.state.page !== prevState.page) {
@@ -78,11 +76,7 @@ export class App extends Component {
       Notiflix.Notify.info('input is empty!');
     }  
   }
-  onInputChange = (e) => {
-    this.setState({
-        searchText: e.target.value,
-    })
-}
+
   onLoadMore = () => {
     this.setState((prevState) => {
       return {
@@ -107,7 +101,7 @@ export class App extends Component {
     const {showModal,modalImage,cards,loading} = this.state
     return (
       <div className={styles.app}>
-        <Searchbar onSubmit={this.onSubmit} onInputChange={this.onInputChange} />
+        <Searchbar onSubmit={this.onSubmit}  />
         <ImageGallery cards={cards} onOpen={this.openModal} />
         {loading && <Loader/>}
         {cards.length > 1 && <Button onLoadMore={this.onLoadMore} />}
@@ -115,4 +109,4 @@ export class App extends Component {
       </div>
     );
   } 
-};
+}
