@@ -26,19 +26,18 @@ export class App extends Component {
   }
   fetchPosts = async() => {
     const { search, page } = this.state;
-    await fetchPhotos(search, page)
-    .then(data => {
+    try {
+      const data = await fetchPhotos(search, page);
       const dataArray = [];
       data.map(({ id, webformatURL, largeImageURL }) =>dataArray.push({ id, webformatURL, largeImageURL })
       )
       if (dataArray.length === 0) {
         Notiflix.Notify.failure('not found any picture!');
-      }
-      return dataArray
-    }
-    )
-    .then( (newCards) => {
-        this.setState((prevState) => {
+        return dataArray;
+      };
+    
+      const newCards=await fetchPhotos(search, page);
+      this.setState((prevState) => {
           if (prevState.cards.length === 0) {
             return {
               cards: newCards,
@@ -49,18 +48,20 @@ export class App extends Component {
             }
           }
         })
-      })
-      .catch(error => {
+        console.log(newCards)
+      }
+      catch (error) {
         this.setState({
           error
         })
-      })
-      .finally(() => this.setState({
-        loading: false,  
-      })
-      )
-    }
+      }
+      finally {this.setState({
+        loading: false  
+        })
+      }
 
+  }
+  
   onSubmit = (e) => {
     e.preventDefault()
     const searchValue = e.target.elements.searchInput.value
@@ -96,9 +97,9 @@ export class App extends Component {
     })
     this.toggleModal()
   }
+render () {
 
-  render() {
-    const {showModal,modalImage,cards,loading} = this.state
+    const {showModal,modalImage,cards,loading} = this.state;
     return (
       <div className={styles.app}>
         <Searchbar onSubmit={this.onSubmit}  />
@@ -108,5 +109,5 @@ export class App extends Component {
         {showModal && modalImage && (<Modal onClose={this.toggleModal} modalImage={modalImage} />)}
       </div>
     );
-  } 
+  }
 }
