@@ -7,20 +7,24 @@ export class Modal extends Component {
         window.addEventListener('keydown', this.handleKeyDown);
         window.addEventListener('click', this.handleCloseClick)
     }
+    
     componentWillUnmount() {
         window.removeEventListener('keydown', this.handleKeyDown);
         window.removeEventListener('click', this.handleCloseClick)
     }
+   
     handleKeyDown = e => {
         if (e.code === 'Escape') {
             return this.props.onClose();
             }
         };  
-    handleCloseClick = e => {
+    
+        handleCloseClick = e => {
         if (e.target.alt === undefined ) {
             return this.props.onClose();
             }      
     }
+    
     render() {
         return (
         <div className={styles.overlay}>
