@@ -5,7 +5,7 @@ import { Searchbar } from "../SearchBar/SearchBar";
 import { Button } from '../Button/Button';
 import { Loader } from '../Loader/Loader';
 import { Modal } from '../Modal/Modal'
-import {fetchPhotos} from 'components/api';
+import {fetchPhotos} from 'API/api';
 import styles from './App.module.css'
 
 export class App extends Component {
